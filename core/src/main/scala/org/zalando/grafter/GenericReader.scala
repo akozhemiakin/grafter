@@ -18,10 +18,10 @@ trait GenericReader {
 
   implicit def hconsReader[R, K <: Symbol, H, T <: HList](implicit
                                                            key: Witness.Aux[K],
-                                                           readerHead: Lazy[Reader[R, H]],
+                                                           readerHead: Lazy[TransitiveReader[R, H]],
                                                            readerTail: Lazy[Reader[R, T]]
   ): Reader[R, FieldType[K, H] :: T] =
-    Reader((r: R) => field[K](readerHead.value(r)) :: readerTail.value(r))
+    Reader((r: R) => field[K](readerHead.value.reader(r)) :: readerTail.value(r))
 
   implicit def genericReader[R, A, Repr](implicit
     gen: LabelledGeneric.Aux[A, Repr],
